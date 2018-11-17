@@ -26,11 +26,38 @@
 .controls[data-state=visible] {
 	display:block;
 }
-.controls button {
+.controls button.fas {
         font-family: 'FontAwesome';
 }
-.controls button::after {
+.controls button.fas::after {
         content: attr(data-fa-icon);
+}
+.controls .fps::before {
+        content: attr(data-fps);
+}
+.controls .spinbox {
+	width:5.7%;
+}
+.controls .spinbox > * {
+	float: right;
+}
+.controls .fps {
+	padding-right: 0.4em;
+	line-height: 2em;
+	text-align: right;
+}
+.controls .narrow {
+	width: 1em;
+	padding: 0;
+}
+.controls .slim {
+	height: 50%;
+}
+.controls #fast {
+	-moz-appearance: spinner-upbutton;
+}
+.controls #slow {
+	-moz-appearance: spinner-downbutton;
 }
 .controls > * {
 	float:left;
@@ -44,7 +71,7 @@
 }
 .controls .progress {
 	cursor:pointer;
-	width:84%;
+	width:78%;
 }
 .controls progress {
 	width:100%;
@@ -64,6 +91,9 @@ window.onload = function (e) {
 	var progress = document.getElementById('progress');
 	var progressBar = document.getElementById('progress-bar');
 	var subtitles = document.getElementById('subtitles');
+	var slow = document.getElementById('slow');
+	var fast = document.getElementById('fast');
+	var fpsdisplay = document.getElementById('fps');
 
 	video.addEventListener('loadedmetadata', function() {
 		progress.setAttribute('max', video.duration);
@@ -106,7 +136,15 @@ window.onload = function (e) {
 		if (video.paused) video.currentTime += 0.04;
 	});
 
-	subtitles.addEventListener('click', function(e) {
+	slow.addEventListener('click', function(e) {
+		frameRateDec();
+	});
+
+	fast.addEventListener('click', function(e) {
+		frameRateInc();
+	});
+
+	function toggleTime() {
 		if (video.textTracks[0].mode == 'showing') {
 			video.textTracks[0].mode = 'hidden';
 		} else {
@@ -114,9 +152,75 @@ window.onload = function (e) {
 			// Workaround for FF, otherwise its only shown on the next frame
 			if (video.paused) video.currentTime += 0;
 		}
+	}
+
+	subtitles.addEventListener('click', function(e) {
+		toggleTime();
 	});
 
+	var playbackRates = [ 1.0/12, 1.0/4, 0.5, 1, 2 ];
+
+	function frameRateInc() {
+		if (video.playbackRate >= 2.0) return;
+		var i;
+		for (i = 0; i < playbackRates.length - 1; i++) {
+			if (playbackRates[i] >= video.playbackRate)
+				break;
+		}
+		video.playbackRate = playbackRates[i + 1];
+		var fps = video.playbackRate * 24;
+		fpsdisplay.setAttribute('data-fps', fps);
+	}
+
+	function frameRateDec() {
+		if (video.playbackRate <= 1.0/12) return;
+		var i;
+		for (i = 1; i < playbackRates.length; i++) {
+			if (playbackRates[i] >= video.playbackRate)
+				break;
+		}
+		video.playbackRate = playbackRates[i - 1];
+		var fps = video.playbackRate * 24;
+		fpsdisplay.setAttribute('data-fps', fps);
+	}
+
+
+	// Key bindings
+	document.onkeydown = function(e) {
+		switch(e.which) {
+			case 32: // space
+				if (video.paused || video.ended) video.play();
+				else video.pause();
+				break;
+
+			case 37: // left
+				if (video.paused) video.currentTime -= 0.04;
+				break;
+
+			case 39: // right
+				if (video.paused) video.currentTime += 0.04;
+				break;
+
+			case 38: // up
+				frameRateInc();
+				break;
+
+			case 40: // down
+				frameRateDec();
+				break;
+
+			case 84: // 't'
+				toggleTime();
+				break;
+
+			default:
+				// alert(e.which);
+				return; // exit this handler for other keys
+		}
+		e.preventDefault(); // prevent the default action (scroll / move caret)
+	};
 };
+
 	</script>
 
 	</head>
@@ -126,15 +230,22 @@ window.onload = function (e) {
 				<track default="" kind="subtitles" srclang="en" label="Timestamps" src="index_files/video_time.vtt">
 			</video>
 			<div id="video-controls" class="controls" data-state="visible">
-				<button id="playpause" class="fas" type="button" data-fa-icon="&#xf04b;"></button>
+				<button title="[SPACE]" id="playpause" class="fas" type="button" data-fa-icon="&#xf04b;"></button>
 				<button id="prev" class="fas" type="button" data-fa-icon="&#xf104;"></button>
 				<button id="next" class="fas" type="button" data-fa-icon="&#xf105;"></button>
 				<div class="progress">
-					<progress id="progress" value="0" min="0" max="0">
+					<progress id="progress" value="0" min="0">
 						<span id="progress-bar"></span>
 					</progress>
 				</div>
-				<button id="subtitles" class="fas" type="button" data-fa-icon="&#xf017;"></button>
+				<div class="spinbox">
+					<span style="float: right;" class="narrow">
+						<button title="[UP]" id="fast" class="btn slim " type="button" ></button>
+						<button title="[DOWN]" id="slow" class="btn slim " type="button" ></button>
+					</span>
+					<span class="fps" id="fps" data-fps="24"> fps</span>
+				</div>
+				<button title="[t]" id="subtitles" class="fas" type="button" data-fa-icon="&#xf017;"></button>
 			</div>
 		</div>
 
