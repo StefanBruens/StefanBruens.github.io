@@ -3,7 +3,7 @@
 		<meta charset="utf-8">
 		<title>Video</title>
 		<!-- <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous"> -->
-		<link rel="stylesheet" href="index_files/font-awesome.css">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <style>
 .video_viewer {
 	height:100%;
@@ -122,22 +122,20 @@ window.onload = function (e) {
 	</head>
 	<body>
 		<div id="video_viewer">
-			<video id="video" src="index_files/video.ogv" style="display: block; max-width: 100%; margin: 0 auto;">
+			<video id="video" src="video.ogv#t=10" style="display: block; max-width: 100%; margin: 0 auto;">
 				<track default="" kind="subtitles" srclang="en" label="Timestamps" src="video_time.vtt">
 			</video>
 			<div id="video-controls" class="controls" data-state="visible">
-				<button id="playpause" class="fas" type="button" data-fa-icon=""></button>
-				<button id="prev" class="fas" type="button" data-fa-icon=""></button>
-				<button id="next" class="fas" type="button" data-fa-icon=""></button>
+				<button id="playpause" class="fas" type="button" data-fa-icon="&#xf04b;"></button>
+				<button id="prev" class="fas" type="button" data-fa-icon="&#xf104;"></button>
+				<button id="next" class="fas" type="button" data-fa-icon="&#xf105;"></button>
 				<div class="progress">
-					<progress id="progress" value="147.197832" min="0" max="244.666666">
-						<span id="progress-bar" style="width: 60%;"></span>
+					<progress id="progress" value="0" min="0" max="0">
+						<span id="progress-bar"></span>
 					</progress>
 				</div>
-				<button id="subtitles" class="fas" type="button" data-fa-icon=""></button>
+				<button id="subtitles" class="fas" type="button" data-fa-icon="&#xf017;"></button>
 			</div>
 		</div>
-	
-
 
 </body></html>
